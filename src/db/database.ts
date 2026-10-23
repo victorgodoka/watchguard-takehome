@@ -9,6 +9,8 @@ export function createDatabase() {
       });
 
       store.createIndex("by-created-at", "created_at");
+      store.createIndex("by-completed-at", "completed_at");
+      store.createIndex("by-due-at", "due_at");
     },
   });
 }

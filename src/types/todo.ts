@@ -4,16 +4,16 @@ export interface Todo {
   id: string;
   title: string;
   description?: string;
+  due_at?: number;
   created_at: number;
   completed: boolean;
+  completed_at?: number;
 }
 
 export type CreateTodoInput = Pick<
   Todo,
-  "title"
-> & {
-  description?: string;
-};
+  "title" | "due_at" | "description"
+>;
 
 export type UpdateTodoInput = Partial<
   Pick<Todo, "title" | "description" | "completed">
@@ -25,6 +25,8 @@ export interface TodoDB extends DBSchema {
     value: Todo;
     indexes: {
       "by-created-at": number;
+      "by-completed-at": number;
+      "by-due-at": number;
     };
   };
 }

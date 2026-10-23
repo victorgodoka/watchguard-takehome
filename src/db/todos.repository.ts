@@ -5,6 +5,7 @@ export function createTodosRepository(db: IDBPDatabase<TodoDB>) {
   return {
     async create(input: CreateTodoInput): Promise<Todo> {
       const title = input.title.trim();
+      const description = input.description?.trim() || undefined;
 
       if (!title) {
         throw new Error("Title is required");
@@ -13,8 +14,9 @@ export function createTodosRepository(db: IDBPDatabase<TodoDB>) {
       const todo: Todo = {
         id: crypto.randomUUID(),
         title,
-        description: input.description?.trim() || undefined,
+        description,
         created_at: Date.now(),
+        due_at: input.due_at,
         completed: false,
       };
 
@@ -77,6 +79,7 @@ export function createTodosRepository(db: IDBPDatabase<TodoDB>) {
 
       const updated: Todo = {
         ...existing,
+        completed_at: existing.completed ? undefined : Date.now(),
         completed: !existing.completed,
       };
 
