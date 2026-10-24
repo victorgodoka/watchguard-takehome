@@ -2,11 +2,33 @@
 
 @theme {
   --color-white: #F0EEE9;
+  --color-dark: #121212;
+  --color-darker: #1A1A1A;
+  --toast-info: var(--color-blue-500);
+  --toast-success: var(--color-green-500);
+  --toast-error: var(--color-red-500);
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
   min-height: 100dvh;
+}
+
+* {
+  outline: none;
+}
+
+[data-type="info"] {
+  background-color: var(--toast-info);
+}
+
+[data-type="error"] {
+  background-color: var(--toast-error);
+}
+
+[data-type="success"] {
+  background-color: var(--toast-success);
 }
