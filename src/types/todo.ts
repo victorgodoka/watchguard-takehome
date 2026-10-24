@@ -1,6 +1,6 @@
 import type { DBSchema } from "idb";
 
-export interface Todo {
+export type Todo = {
   id: string;
   title: string;
   description?: string;
@@ -12,8 +12,8 @@ export interface Todo {
 
 export type CreateTodoInput = Pick<
   Todo,
-  "title" | "due_at" | "description"
->;
+  "title" & { due_at?:string; description? : string}
+  >;
 
 export type UpdateTodoInput = Partial<
   Pick<Todo, "title" | "description" | "completed">
