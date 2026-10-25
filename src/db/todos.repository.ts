@@ -1,5 +1,6 @@
 import type { IDBPDatabase } from "idb";
-import type { CreateTodoInput, Todo, TodoDB, UpdateTodoInput } from "../types/todo";
+import type { CreateTodoInput, Todo, UpdateTodoInput } from "../types/todo";
+import type { TodoDB } from "./database";
 
 export function createTodosRepository(db: IDBPDatabase<TodoDB>) {
   return {
@@ -88,9 +89,10 @@ export function createTodosRepository(db: IDBPDatabase<TodoDB>) {
 
       return updated;
     },
-  
+
     async getAll(): Promise<Todo[]> {
-      return db.getAllFromIndex("todos", "by-created-at");
+      const todos = await db.getAllFromIndex("todos", "by-created-at");
+      return todos.reverse();
     },
 
     async getById(id: string): Promise<Todo | undefined> {

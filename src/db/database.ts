@@ -1,8 +1,20 @@
-import { openDB } from "idb";
-import type { TodoDB } from "../types/todo";
+import { type DBSchema, openDB } from "idb";
+import type { Todo } from "../types/todo";
 
-export function createDatabase() {
-  return openDB<TodoDB>("todo-app", 1, {
+export interface TodoDB extends DBSchema {
+  todos: {
+    key: string;
+    value: Todo;
+    indexes: {
+      "by-created-at": number;
+      "by-completed-at": number;
+      "by-due-at": number;
+    };
+  };
+}
+
+export function createDatabase(name = "todo-app") {
+  return openDB<TodoDB>(name, 1, {
     upgrade(db) {
       const store = db.createObjectStore("todos", {
         keyPath: "id",
@@ -16,8 +28,3 @@ export function createDatabase() {
 }
 
 export const dbPromise = createDatabase();
-
-export async function clearTodosForTests() {
-  const db = await dbPromise;
-  await db.clear("todos");
-}

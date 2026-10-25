@@ -1,25 +1,15 @@
-import "fake-indexeddb/auto";
+import type { IDBPDatabase } from "idb";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { openDB, type IDBPDatabase } from "idb";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-
+import { createDatabase, type TodoDB } from "./database";
 import { createTodosRepository } from "./todos.repository";
-import type { TodoDB } from "../types/todo";
 
 describe("todos repository", () => {
   let db: IDBPDatabase<TodoDB>;
   let repository: ReturnType<typeof createTodosRepository>;
 
   beforeEach(async () => {
-    db = await openDB<TodoDB>(crypto.randomUUID(), 1, {
-      upgrade(db) {
-        const store = db.createObjectStore("todos", {
-          keyPath: "id",
-        });
-
-        store.createIndex("by-created-at", "created_at");
-      },
-    });
+    db = await createDatabase(crypto.randomUUID());
 
     repository = createTodosRepository(db);
   });
@@ -61,11 +51,11 @@ describe("todos repository", () => {
 
     const updated = await repository.update(todo.id, {
       title: "Go shopping",
-      completed: true,
+      due_at: 1_000,
     });
 
     expect(updated.title).toBe("Go shopping");
-    expect(updated.completed).toBe(true);
+    expect(updated.due_at).toBe(1_000);
     expect(updated.id).toBe(todo.id);
   });
 
@@ -120,6 +110,8 @@ describe("todos repository", () => {
   });
 
   it("returns all todos in descending order of creation", async () => {
+    vi.spyOn(Date, "now").mockReturnValueOnce(1_000).mockReturnValueOnce(2_000);
+
     await repository.create({ title: "First task" });
     await repository.create({ title: "Second task" });
 
